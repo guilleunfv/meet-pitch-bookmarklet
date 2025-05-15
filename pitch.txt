@@ -1,10 +1,29 @@
-### MI GUION DE LLAMADA EMPRESARIAL ###
+INICIO
 
-👋 SALUDO:
-"Hola [Nombre], soy [Tu Nombre]. ¿Qué tal?"
+Saludo y rol:
+“Hola [Nombre], soy tu asesor de Mercado Pads.”
+Tiempo y objetivo de la llamada:
+“Tenemos [30/60] min. Hoy veremos [objetivo].”
+Repaso de último contacto:
+“La vez anterior acordamos [acción]. Hoy veremos avances y próximos pasos.”
+Chequear agenda:
+“¿Te suma algo más?”
+Novedades del cliente:
+“¿Hay novedades en tu negocio o cuenta?”
+DESARROLLO
 
-🎯 PROPÓSITO:
-"Te llamo para ver si [Tu Solución] podría ayudarte con [Problema]."
+Analizar:
+[Ventas, campañas, oportunidades, mejoras, dudas]
+Propuestas:
+Recomendar acciones/mejoras
+Escucha activa:
+“¿Cuál es tu objetivo principal ahora?”
+“¿Algún desafío urgente?”
+CIERRE
 
-🏁 CIERRE:
-"¿Agendamos una charla rápida la próxima semana?"
+Recapitular:
+“En resumen, acordamos: [acción 1], [acción 2]... ¿correcto?”
+Siguiente contacto:
+“Próxima llamada: [fecha/hora], para [objetivo]. ¿Confirmamos?”
+Despedida:
+“¡Gracias, [Nombre]!”
