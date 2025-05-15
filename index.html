@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Asistente de Pitch para Meet</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css " />
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -14,23 +14,26 @@
             background-color: #f6f8fa;
             color: #24292e;
         }
+
         .container {
             max-width: 700px;
             margin: 0 auto;
             background-color: #fff;
-            padding: 20px 30px;
+            padding: 25px 30px;
             border-radius: 8px;
             box-shadow: 0 3px 10px rgba(0,0,0,0.1);
         }
+
         h1 {
             color: #0366d6;
             border-bottom: 1px solid #eaecef;
             padding-bottom: 0.3em;
         }
+
         .pitch-box {
             position: fixed;
             top: 70px;
-            left: 15px;  /* Cambiado a izquierda */
+            left: 15px;
             width: 320px;
             max-height: calc(100vh - 100px);
             overflow-y: auto;
@@ -43,9 +46,10 @@
             font-family: Arial,Helvetica,sans-serif;
             box-shadow: 0 4px 12px rgba(0,0,0,0.2);
             border-radius: 8px;
-            display: none; /* Ocultado inicialmente */
-            transition: all 0.3s ease;
+            display: none;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
         }
+
         .close-button {
             position: absolute;
             top: 5px;
@@ -59,10 +63,12 @@
             font-weight: bold;
             cursor: pointer;
         }
+
         .close-button:hover {
             color: #000;
             background: #f0f0f0;
         }
+
         .bookmarklet-link {
             display: inline-block;
             padding: 12px 24px;
@@ -76,9 +82,11 @@
             box-shadow: inset 0 -2px 0 rgba(0,0,0,0.15);
             transition: background-color 0.2s ease-in-out;
         }
+
         .bookmarklet-link:hover {
             background-color: #278742;
         }
+
         .important-note {
             background-color: #fffbdd;
             border-left: 4px solid #ffc107;
@@ -88,69 +96,81 @@
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Asistente de Pitch para Google Meet</h1>
-        <p>Arrastra el siguiente botón a tu barra de marcadores para instalar el asistente de pitch para Google Meet.</p>
-        <p><strong>Este bookmarklet cargará el guion directamente desde este repositorio de GitHub.</strong></p>
 
-        <a id="installBookmarklet" class="bookmarklet-link" href="#">
-            <i class="fas fa-bookmark"></i> Arrastrar: Pitch Meet
-        </a>
+<div class="container">
+    <h1>Asistente de Pitch para Google Meet</h1>
+    <p>Arrastra el siguiente botón a tu barra de marcadores para instalar el asistente de pitch.</p>
+    <p><strong>Este bookmarklet cargará automáticamente el contenido desde el archivo <code>pitch.txt</code>.</strong></p>
 
-        <div class="important-note">
-            <p><strong>Nota:</strong> Si actualizas el archivo <code>pitch.txt</code> en el repositorio, el bookmarklet utilizará la nueva versión la próxima vez que lo actives.</p>
-        </div>
+    <a id="installBookmarklet" class="bookmarklet-link" href="#" aria-label="Instalar Bookmarklet: Asistente de Pitch">
+        <i class="fas fa-bookmark"></i> Arrastrar: Pitch Meet
+    </a>
 
-        <h2>¿Cómo funciona?</h2>
-        <ul>
-            <li><i class="fas fa-sync-alt"></i> Carga siempre el contenido más reciente del archivo <code>pitch.txt</code>.</li>
-            <li><i class="fas fa-eye"></i> Se muestra en un recuadro dentro de tu ventana de Google Meet.</li>
-            <li><i class="fas fa-times-circle"></i> Puedes ocultar/mostrar el recuadro haciendo clic en el botón o usando la 'X'.</li>
-        </ul>
+    <div class="important-note">
+        <p><strong>Nota:</strong> Si actualizas el archivo <code>pitch.txt</code>, el cambio se reflejará la próxima vez que uses el bookmarklet.</p>
     </div>
 
-    <div class="pitch-box" id="myMeetPitchFromRepo">
-        <button class="close-button" aria-label="Cerrar pitch">×</button>
-        <div id="pitchContent">Cargando contenido...</div>
-    </div>
+    <h2>¿Cómo funciona?</h2>
+    <ul>
+        <li><i class="fas fa-sync-alt"></i> Carga siempre el contenido más reciente del archivo <code>pitch.txt</code>.</li>
+        <li><i class="fas fa-eye"></i> Se muestra en un recuadro dentro de tu ventana de Google Meet.</li>
+        <li><i class="fas fa-times-circle"></i> Puedes ocultar/mostrar el recuadro haciendo clic en el botón o usando la 'X'.</li>
+    </ul>
+</div>
 
-    <script>
-        const GITHUB_USER = 'guilleunfv'; // Tu usuario de GitHub
-        const REPO_NAME = 'meet-pitch-bookmarklet'; // Tu nombre de repositorio
-        const PITCH_FILE_PATH = 'pitch.txt'; // El nombre de tu archivo de pitch
+<!-- Cuadro de Pitch -->
+<div class="pitch-box" id="myMeetPitchFromRepo" role="dialog" aria-labelledby="pitchTitle">
+    <button class="close-button" aria-label="Cerrar pitch">×</button>
+    <div id="pitchContent">Cargando contenido...</div>
+</div>
 
-        const pitchFileUrl = `https://raw.githubusercontent.com/guilleunfv/meet-pitch-bookmarklet/main/pitch.txt`;
+<script>
+    // Configuración
+    const GITHUB_USER = 'guilleunfv';
+    const REPO_NAME = 'meet-pitch-bookmarklet';
+    const PITCH_FILE_PATH = 'pitch.txt';
 
-        const bookmarkletCode = `javascript:(async function() {
-            const PITCH_TEXT_URL = '${pitchFileUrl}';
-            const pitchBox = document.getElementById('myMeetPitchFromRepo');
-            const pitchContent = document.getElementById('pitchContent');
+    const pitchFileUrl = `https://raw.githubusercontent.com/ ${GITHUB_USER}/${REPO_NAME}/main/${PITCH_FILE_PATH}`;
 
-            if (pitchBox.style.display === 'block') {
-                pitchBox.style.display = 'none';
-            } else {
-                try {
-                    const response = await fetch(PITCH_TEXT_URL + '?cache_bust=' + new Date().getTime());
-                    if (!response.ok) {
-                        throw new Error('HTTP error! status: ' + response.status + ' - ' + response.statusText);
-                    }
-                    const miPitch = await response.text();
-                    pitchContent.innerText = miPitch;
-                    pitchBox.style.display = 'block';
-                } catch (error) {
-                    console.error('Error Pitch Bookmarklet: ', error);
-                    alert('No se pudo cargar el pitch. Detalles: ' + error.message);
-                }
-            }
-        })();`;
+    const bookmarkletCode = `javascript:(async function() {
+        const PITCH_TEXT_URL = '${pitchFileUrl}';
+        const pitchBox = document.getElementById('myMeetPitchFromRepo');
+        const pitchContent = document.getElementById('pitchContent');
 
-        document.getElementById('installBookmarklet').setAttribute('href', bookmarkletCode);
-        
-        // Cerrar el pitch box
-        document.querySelector('.close-button').onclick = function() {
-            document.getElementById('myMeetPitchFromRepo').style.display = 'none';
+        if (!pitchBox) {
+            console.error('No se encontró el contenedor del pitch.');
+            return;
         }
-    </script>
+
+        if (pitchBox.style.display === 'block') {
+            pitchBox.style.display = 'none';
+            return;
+        }
+
+        pitchContent.textContent = 'Cargando...';
+        pitchBox.style.display = 'block';
+
+        try {
+            const response = await fetch(PITCH_TEXT_URL + '?cache=' + new Date().getTime());
+            if (!response.ok) throw new Error('Error al cargar el archivo.');
+
+            const texto = await response.text();
+            pitchContent.textContent = texto;
+
+        } catch (error) {
+            console.error('Error al cargar el pitch:', error);
+            pitchContent.innerHTML = '<span style="color:red;">⚠️ No se pudo cargar el contenido: ' + error.message + '</span>';
+        }
+    })();`;
+
+    // Asignamos el bookmarklet al link
+    document.getElementById('installBookmarklet').setAttribute('href', bookmarkletCode);
+
+    // Botón de cerrar
+    document.querySelector('.close-button').onclick = function () {
+        document.getElementById('myMeetPitchFromRepo').style.display = 'none';
+    };
+</script>
 
 </body>
 </html>
