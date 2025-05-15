@@ -1,0 +1,10 @@
+### MI GUION DE LLAMADA EMPRESARIAL ###
+
+👋 SALUDO:
+"Hola [Nombre], soy [Tu Nombre]. ¿Qué tal?"
+
+🎯 PROPÓSITO:
+"Te llamo para ver si [Tu Solución] podría ayudarte con [Problema]."
+
+🏁 CIERRE:
+"¿Agendamos una charla rápida la próxima semana?"
