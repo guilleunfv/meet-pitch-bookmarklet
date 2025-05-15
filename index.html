@@ -4,9 +4,31 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Asistente de Pitch para Meet</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css " />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
     <style>
-        /* ... (estilos existentes) ... */
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"; line-height: 1.6; margin: 0; padding: 30px; background-color: #f6f8fa; color: #24292e; }
+        .container { max-width: 700px; margin: 0 auto; background-color: #fff; padding: 20px 30px; border-radius: 8px; box-shadow: 0 3px 10px rgba(0,0,0,0.1); }
+        h1 { color: #0366d6; border-bottom: 1px solid #eaecef; padding-bottom: 0.3em; }
+        p { margin-bottom: 1em; }
+        .bookmarklet-link {
+            display: inline-block;
+            padding: 12px 24px;
+            background-color: #2c974b; /* Verde GitHub */
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: bold;
+            border: 1px solid #258040;
+            box-shadow: inset 0 -2px 0 rgba(0,0,0,0.15);
+            transition: background-color 0.2s ease-in-out;
+        }
+        .bookmarklet-link:hover { background-color: #278742; }
+        .important-note { background-color: #fffbdd; border-left: 4px solid #ffc107; padding: 10px 15px; margin-top: 20px; }
+        ul { list-style: none; padding-left: 0; }
+        ul li { margin-bottom: 0.5em; display: flex; align-items: center; }
+        ul li i { margin-right: 8px; color: #0366d6; }
+        /* NO NECESITAMOS ESTILOS PARA .pitch-box AQUÍ, EL BOOKMARKLET LOS CREA */
     </style>
 </head>
 <body>
@@ -14,77 +36,123 @@
 <div class="container">
     <h1>Asistente de Pitch para Google Meet</h1>
     <p>Arrastra el siguiente botón a tu barra de marcadores para instalar el asistente de pitch.</p>
-    <p><strong>Este bookmarklet cargará automáticamente el contenido desde el archivo <code>pitch.txt</code>.</strong></p>
+    <p><strong>Este bookmarklet cargará automáticamente el contenido desde el archivo <code>pitch.txt</code> de nuestro repositorio.</strong></p>
 
     <a id="installBookmarklet" class="bookmarklet-link" href="#" aria-label="Instalar Bookmarklet: Asistente de Pitch">
         <i class="fas fa-bookmark"></i> Arrastrar: Pitch Meet
     </a>
 
     <div class="important-note">
-        <p><strong>Nota:</strong> Si actualizas el archivo <code>pitch.txt</code>, el cambio se reflejará la próxima vez que uses el bookmarklet.</p>
+        <p><strong>Nota:</strong> Si actualizas el archivo <code>pitch.txt</code> en el repositorio, el cambio se reflejará la próxima vez que uses el bookmarklet.</p>
     </div>
 
     <h2>¿Cómo funciona?</h2>
     <ul>
         <li><i class="fas fa-sync-alt"></i> Carga siempre el contenido más reciente del archivo <code>pitch.txt</code>.</li>
         <li><i class="fas fa-eye"></i> Se muestra en un recuadro dentro de tu ventana de Google Meet.</li>
-        <li><i class="fas fa-times-circle"></i> Puedes ocultar/mostrar el recuadro haciendo clic en el botón o usando la 'X'.</li>
+        <li><i class="fas fa-times-circle"></i> Puedes ocultar/mostrar el recuadro haciendo clic de nuevo en el bookmarklet o usando la 'X' en el recuadro.</li>
     </ul>
 </div>
 
-<!-- Cuadro de Pitch -->
-<div class="pitch-box" id="myMeetPitchFromRepo" role="dialog" aria-labelledby="pitchTitle">
-    <button class="close-button" aria-label="Cerrar pitch">×</button>
-    <div id="pitchContent">Cargando contenido...</div>
-</div>
+<!-- ELIMINAMOS EL "Cuadro de Pitch" de aquí, ya que el bookmarklet lo creará -->
 
 <script>
     // Configuración
     const GITHUB_USER = 'guilleunfv';
     const REPO_NAME = 'meet-pitch-bookmarklet';
-    const PITCH_FILE_PATH = 'pitch.txt';
+    const PITCH_FILE_PATH = 'pitch.txt'; // Asumiendo que está en la raíz de la rama principal
+    const BRANCH_NAME = 'main'; // O 'master' o la que sea tu rama principal
 
-    // Usamos GitHub Pages para evitar problemas de CORS
-    const pitchFileUrl = `https://guilleunfv.github.io/meet-pitch-bookmarklet/pitch.txt `;
+    // URL correcta para el archivo RAW
+    const pitchFileUrl = `https://raw.githubusercontent.com/${GITHUB_USER}/${REPO_NAME}/${BRANCH_NAME}/${PITCH_FILE_PATH}`;
 
+    // Este es el código que se ejecutará EN GOOGLE MEET
     const bookmarkletCode = `javascript:(async function() {
         const PITCH_TEXT_URL = '${pitchFileUrl}';
-        const pitchBox = document.getElementById('myMeetPitchFromRepo');
-        const pitchContent = document.getElementById('pitchContent');
+        const PITCH_BOX_ID = 'myMeetPitchFromRepoBookmarklet'; // ID único para el div creado por el bookmarklet
+        let pitchBox = document.getElementById(PITCH_BOX_ID);
 
-        if (!pitchBox) {
-            console.error('No se encontró el contenedor del pitch.');
+        if (pitchBox) { // Si ya existe, lo quitamos y terminamos
+            pitchBox.remove();
             return;
         }
 
-        if (pitchBox.style.display === 'block') {
-            pitchBox.style.display = 'none';
-            return;
-        }
+        // Si no existe, lo creamos
+        pitchBox = document.createElement('div');
+        pitchBox.id = PITCH_BOX_ID;
+        pitchBox.setAttribute('role', 'dialog');
+        pitchBox.setAttribute('aria-modal', 'false'); // No es estrictamente modal
+        pitchBox.setAttribute('aria-label', 'Contenido del Pitch');
+        
+        // Estilos básicos (puedes copiarlos de versiones anteriores que te funcionaron)
+        pitchBox.style.position = 'fixed';
+        pitchBox.style.top = '70px';
+        pitchBox.style.right = '15px';
+        pitchBox.style.width = '320px';
+        pitchBox.style.maxHeight = 'calc(100vh - 100px)';
+        pitchBox.style.overflowY = 'auto';
+        pitchBox.style.backgroundColor = 'rgba(250, 245, 230, 0.97)';
+        pitchBox.style.border = '1px solid #d3c7a6';
+        pitchBox.style.padding = '15px';
+        pitchBox.style.zIndex = '2147483647'; // Muy alto para estar encima
+        pitchBox.style.fontSize = '13px';
+        pitchBox.style.lineHeight = '1.5';
+        pitchBox.style.fontFamily = 'Arial, Helvetica, sans-serif';
+        pitchBox.style.boxShadow = '0 4px 12px rgba(0,0,0,0.2)';
+        pitchBox.style.borderRadius = '8px';
+        pitchBox.style.whiteSpace = 'pre-wrap'; // Para respetar saltos de línea del pitch
 
-        pitchContent.textContent = 'Cargando...';
-        pitchBox.style.display = 'block';
+        // Contenido inicial mientras carga
+        const pitchContentElement = document.createElement('div');
+        pitchContentElement.textContent = 'Cargando pitch...';
+        pitchBox.appendChild(pitchContentElement);
+
+        // Botón de cerrar
+        const closeButton = document.createElement('button');
+        closeButton.innerText = '×';
+        closeButton.setAttribute('aria-label', 'Cerrar pitch');
+        closeButton.style.position = 'absolute';
+        closeButton.style.top = '5px';
+        closeButton.style.right = '8px';
+        closeButton.style.background = 'transparent';
+        closeButton.style.color = '#666';
+        closeButton.style.border = 'none';
+        closeButton.style.borderRadius = '4px';
+        closeButton.style.padding = '1px 7px';
+        closeButton.style.fontSize = '20px';
+        closeButton.style.fontWeight = 'bold';
+        closeButton.style.lineHeight = '1';
+        closeButton.style.cursor = 'pointer';
+        closeButton.onmouseover = function() { this.style.color = '#000'; this.style.background = '#f0f0f0'; };
+        closeButton.onmouseout = function() { this.style.color = '#666'; this.style.background = 'transparent'; };
+        closeButton.onclick = function(e) {
+            e.stopPropagation(); // Evitar que el click cierre y abra inmediatamente si el pitchBox es clickeable
+            if (pitchBox) pitchBox.remove();
+        };
+        pitchBox.appendChild(closeButton);
+
+        // Añadir el pitchBox al cuerpo de la página actual (Google Meet)
+        document.body.appendChild(pitchBox);
 
         try {
-            const response = await fetch(PITCH_TEXT_URL + '?cache=' + new Date().getTime());
-            if (!response.ok) throw new Error('Error al cargar el archivo.');
-
+            const response = await fetch(PITCH_TEXT_URL + '?cache_bust=' + new Date().getTime());
+            if (!response.ok) {
+                throw new Error('Error HTTP: ' + response.status + ' ' + response.statusText);
+            }
             const texto = await response.text();
-            pitchContent.textContent = texto;
+            pitchContentElement.textContent = texto; // Actualizar con el contenido real
 
         } catch (error) {
             console.error('Error al cargar el pitch:', error);
-            pitchContent.innerHTML = '<span style="color:red;">⚠️ No se pudo cargar el contenido: ' + error.message + '</span>';
+            pitchContentElement.innerHTML = '<span style="color:red; font-weight:bold;">⚠️ No se pudo cargar el contenido.</span><br><small>' + error.message + '</small><br><small>Verifica la URL: ' + PITCH_TEXT_URL + '</small>';
         }
     })();`;
 
     // Asignamos el bookmarklet al link
     document.getElementById('installBookmarklet').setAttribute('href', bookmarkletCode);
 
-    // Botón de cerrar
-    document.querySelector('.close-button').onclick = function () {
-        document.getElementById('myMeetPitchFromRepo').style.display = 'none';
-    };
+    // EL SCRIPT PARA EL BOTÓN DE CERRAR DEL DIV EN *ESTA* PÁGINA YA NO ES NECESARIO
+    // PORQUE ELIMINAMOS EL DIV DEL PITCH DE ESTA PÁGINA.
 </script>
 
 </body>
